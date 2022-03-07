@@ -49,7 +49,7 @@ router.get("/posts", async(req, res) => {
 
   const data = await makeAPIRequestsByTag(tags);
 
-  console.log(data);
+  res.json(data);
 });
 
 app.use("/api", router);
