@@ -1,6 +1,7 @@
 /* eslint-disable func-style */
 const express = require("express");
 const axios = require("axios");
+const { response } = require("express");
 const router = express.Router();
 // initialize express server
 const app = express();
@@ -9,6 +10,8 @@ const PORT = 3000;
 const validSortByQueryStringsArray = ["id", "reads", "likes", "popularity"];
 const validDirectionQueryStringsArray = ["asc", "desc"];
 // helper functions
+
+// make individual api call's to server
 async function makeAPIRequestsByTag(tags) {
   const individualAPIRequestsArray = tags.split(",");
   const promises = [];
@@ -17,7 +20,7 @@ async function makeAPIRequestsByTag(tags) {
     promises.push(
       axios
         .get(`https://api.hatchways.io/assessment/blog/posts?tag=${requestTag}`)
-        .then((res) => res.data)
+        .then((res) => res.data.posts)
     );
   }
   return await Promise.all(promises).then((data) => data);
@@ -38,7 +41,7 @@ router.get("/ping", (req, res) => {
     .catch((e) => console.log(e));
 });
 
-router.get("/posts", async(req, res) => {
+router.get("/posts", async (req, res) => {
   const { tags, sortBy, direction } = req.query;
   if (!tags)
     return res.status(400).json({ error: "Tags parameter is required" });
@@ -48,8 +51,19 @@ router.get("/posts", async(req, res) => {
     return res.status(400).json({ error: "direction parameter is invalid" });
 
   const data = await makeAPIRequestsByTag(tags);
+  const combinedData = data.flat();
 
-  res.json(data);
+  // first create an set from the data ids thus filtering out duplicates ids,
+  // then use the find method to return the first instance of the id
+  // in the original data, effectively filtering out duplicates.
+
+  const uniqueData = Array.from(
+    new Set(combinedData.map((data) => data.id))
+  ).map((id) => {
+    return combinedData.find((post) => post.id === id);
+  });
+
+  res.json(uniqueData);
 });
 
 app.use("/api", router);
