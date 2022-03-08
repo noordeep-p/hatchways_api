@@ -44,6 +44,7 @@ router.get("/ping", (req, res) => {
 
 router.get("/posts", async(req, res) => {
   let { tags, sortBy, direction } = req.query;
+  // check that all query params are correct according to documentation else respond with error
   if (!tags)
     return res.status(400).json({ error: "Tags parameter is required" });
   if (sortBy && !(validSortByQueryStringsArray.indexOf(sortBy) > -1))
@@ -56,7 +57,7 @@ router.get("/posts", async(req, res) => {
 
   // first create an set from the data ids thus filtering out duplicates ids,
   // then use the find method to return the first instance of the id
-  // in the original data, effectively filtering out duplicates.
+  // in the original data, effectively filtering out duplicates
 
   let uniqueData = Array.from(new Set(combinedData.map((data) => data.id))).map(
     (id) => {
@@ -65,7 +66,7 @@ router.get("/posts", async(req, res) => {
   );
 
   // use js sort method to sort object by given keys, if direction & sortby are defined
-  // in query use them else reset to defaults in documentation.
+  // in query use them else reset to defaults in documentation
 
   sortBy ? sortBy : (sortBy = "id");
   direction ? direction : (direction = "asc");
