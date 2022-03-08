@@ -44,5 +44,30 @@ describe("Backend Assessment - Blog Posts", function() {
       }
     );
   });
+
+  it("api will return only unique posts for calls with multiple tags", function(done) {
+    axios
+      .get("http://localhost:3000/api/posts?tags=tech,health")
+      .then((res) => {
+        let posts = res.data;
+        let uniqueIDs = [];
+        let passedTest = true;
+
+        // create an array of post ids and check all ids are unique
+        posts.forEach((post) => {
+          if (uniqueIDs.includes(post.id)) {
+            passedTest = false;
+          } else {
+            uniqueIDs.push(post.id);
+          }
+        });
+
+        expect(passedTest).to.equal(true);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    done();
+  });
   
 });
