@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 const expect = require("chai").expect;
 const request = require("request");
 const axios = require("axios");
@@ -64,8 +63,8 @@ describe("Backend Assessment - Blog Posts", function() {
 
         expect(passedTest).to.equal(true);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch((e) => {
+        console.log(e);
       });
     done();
   });
@@ -92,8 +91,8 @@ describe("Backend Assessment - Blog Posts", function() {
 
         expect(passedTest).to.equal(true);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch((e) => {
+        console.log(e);
       });
     done();
   });
