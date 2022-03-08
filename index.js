@@ -1,7 +1,6 @@
 /* eslint-disable func-style */
 const express = require("express");
 const axios = require("axios");
-const { response } = require("express");
 const router = express.Router();
 // initialize express server
 const app = express();
@@ -36,13 +35,15 @@ router.get("/ping", (req, res) => {
     .then((response) => {
       if (response.status === 200) {
         res.status(200).json({ success: true });
+      } else {
+        res.status(400).json({ success: false });
       }
     })
     .catch((e) => console.log(e));
 });
 
 router.get("/posts", async (req, res) => {
-  const { tags, sortBy, direction } = req.query;
+  let { tags, sortBy, direction } = req.query;
   if (!tags)
     return res.status(400).json({ error: "Tags parameter is required" });
   if (sortBy && !(validSortByQueryStringsArray.indexOf(sortBy) > -1))
@@ -57,13 +58,24 @@ router.get("/posts", async (req, res) => {
   // then use the find method to return the first instance of the id
   // in the original data, effectively filtering out duplicates.
 
-  const uniqueData = Array.from(
-    new Set(combinedData.map((data) => data.id))
-  ).map((id) => {
-    return combinedData.find((post) => post.id === id);
-  });
+  let uniqueData = Array.from(new Set(combinedData.map((data) => data.id))).map(
+    (id) => {
+      return combinedData.find((post) => post.id === id);
+    }
+  );
 
-  res.json(uniqueData);
+  // use js sort method to sort object by given keys, if direction & sortby are defined
+  // in query use them else reset to defaults in documentation.
+
+  sortBy ? sortBy : (sortBy = "id");
+  direction ? direction : (direction = "asc");
+
+  uniqueData =
+    direction === "desc"
+      ? uniqueData.sort((a, b) => (b[sortBy] > a[sortBy] ? 1 : -1))
+      : uniqueData.sort((a, b) => (b[sortBy] < a[sortBy] ? 1 : -1));
+
+  res.status(200).json(uniqueData);
 });
 
 app.use("/api", router);
