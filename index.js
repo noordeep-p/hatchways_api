@@ -42,7 +42,7 @@ router.get("/ping", (req, res) => {
     .catch((e) => console.log(e));
 });
 
-router.get("/posts", async (req, res) => {
+router.get("/posts", async(req, res) => {
   let { tags, sortBy, direction } = req.query;
   if (!tags)
     return res.status(400).json({ error: "Tags parameter is required" });
