@@ -49,7 +49,7 @@ describe("Backend Assessment - Blog Posts", function() {
     axios
       .get("http://localhost:3000/api/posts?tags=tech,health")
       .then((res) => {
-        let posts = res.data;
+        const posts = res.data;
         let uniqueIDs = [];
         let passedTest = true;
 
@@ -69,5 +69,32 @@ describe("Backend Assessment - Blog Posts", function() {
       });
     done();
   });
-  
+
+  it("api will correctly sort/ order responses according to user query params", function(done) {
+    // make request to sort by likes in desc values
+    axios
+      .get(
+        "http://localhost:3000/api/posts?tags=tech,health&sortBy=likes&direction=desc"
+      )
+      .then((res) => {
+        const posts = res.data;
+        let passedTest = true;
+        let lastVal = posts[0].likes;
+
+        // loop through all likes and check if values are sorted by likes in desc order
+        for (let i = 1; i < posts.length; i++) {
+          if (posts[i].likes > lastVal) {
+            passedTest = false;
+          } else {
+            lastVal = posts[i].likes;
+          }
+        }
+
+        expect(passedTest).to.equal(true);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    done();
+  });
 });
