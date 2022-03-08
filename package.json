@@ -4,14 +4,16 @@
   "description": "Backend Assessment - Blog Posts",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha test.js",
     "dev": "nodemon index.js"
   },
   "author": "Noordeep Punjabi",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.26.0",
-    "express": "^4.17.3"
+    "chai": "^4.3.6",
+    "express": "^4.17.3",
+    "request": "^2.88.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"
